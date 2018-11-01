@@ -1,0 +1,16 @@
+.idea/*
+out/*
+
+*.iml
+*.xml
+
+.idea
+idea/*
+
+.gradle
+gradle/*
+build/*
+
+*.bat
+
+*.war
