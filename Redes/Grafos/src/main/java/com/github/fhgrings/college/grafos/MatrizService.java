@@ -6,6 +6,8 @@ import static com.github.fhgrings.college.grafos.Main.*;
 
 public class MatrizService {
 
+
+    //Nao é usado ainda pq declaramos os valores da matriz no inicio do programa
     public void receberMatriz() {
         Scanner sc = new Scanner(System.in);
         for (int i = 0; i < eixoX; i++) {
@@ -15,6 +17,8 @@ public class MatrizService {
         }
     }
 
+
+    //Recebe a matriz e mostra na tela em formato 5x5
     public void printMatriz() {
         for (int i = 0; i < eixoX; i++) {
             for (int j = 0; j < eixoy; j++) {
@@ -25,6 +29,8 @@ public class MatrizService {
     }
 
 
+
+    // Busca as conexoes diretas (1 para 1) da matriz
     public void mostrarCaminhos() {
         for (int i = 0; i < eixoX; i++) {
             for (int j = 0; j < eixoy; j++) {
