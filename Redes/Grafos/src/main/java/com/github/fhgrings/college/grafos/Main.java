@@ -1,54 +1,32 @@
 package com.github.fhgrings.college.grafos;
 
-import java.util.Scanner;
-
 public class Main {
 
-    private static int matriz[][] = new int[2][2];
-    private static int matrizCaminho[][] = new int[2][2];
-    private static int eixoX = 2;
-    private static int eixoy = 2;
-    private static int k=0;
 
-    public static void main (String[] args) {
+    public static int eixoX = 5;
+    public static int eixoy = 5;
+    public static int matriz[][] =  { {0, 1, 0, 1, 0}, {0, 0, 0, 0, 0}, {0, 1, 0, 1, 1}, {0, 1, 1, 0,0}, {0, 0, 1, 0, 0} };
+    public static int[][] matrizCaminho = new int[(int)Math.pow(matriz.length,2)][2];
+    public static int k = 0;
 
+    private static EncontrarCaminho encontrarCaminho = new EncontrarCaminho();
+    private static MatrizService matrizService = new MatrizService();
 
-        Scanner sc = new Scanner(System.in);
+    public static void main(String[] args) {
 
-        for(int i=0;i < eixoX;i++) {
-            for(int j=0;j < eixoy;j++){
-                matriz[i][j] =sc.nextInt();
-            }
-        }
+        System.out.println(matriz.length);
 
-        for(int i=0;i< eixoX;i++) {
-            for(int j=0;j< eixoy;j++){
-                System.out.print(matriz[i][j]+" ");
-            }
-            System.out.println();
-        }
+        matrizService.printMatriz();
+        matrizService.mostrarCaminhos();
+
+        System.out.println(matriz.length);
 
 
+        System.out.println(encontrarCaminho.execute(1,5));
+        matrizService.mostrarCaminhos();
+        System.out.println(encontrarCaminho.execute(1,5));
 
-        for(int i=0;i< eixoX;i++) {
-            for(int j=0;j< eixoy;j++){
-                if(matriz[i][j]>0) {
-                    System.out.println(i + 1 + "--->" + (j + 1));
-                    matrizCaminho[k][0]=i+1;
-                    matrizCaminho[k][1]=j+1;
-                    k++;
-                }
-            }
-        }
+
+
     }
-
-
-    public String execute(int saida, int chegada){
-        int tentativas = matriz.length;
-
-        while (tentativas>0) {
-            //fazer tentantiva por cada caminho possivel ainda nao desenvolvi a logica
-        }
-    }
-
 }
