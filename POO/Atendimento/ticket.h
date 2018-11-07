@@ -1,5 +1,9 @@
 #ifndef TICKET_H
 #define TICKET_H
+#include <time.h>
+#include <QApplication>
+#include <QtCore>
+
 
 
 class Ticket
@@ -8,8 +12,8 @@ public:
     Ticket();
     Ticket(int);
     int value;
-    time_t now;
-    tm *ltm;
+    time_t timer;
+    QString timeString;
     // current date/time based on current system
     // print various components of tm structure.
     //   cout << "Year" << 1970 + ltm->tm_year<<endl;

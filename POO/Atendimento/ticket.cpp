@@ -1,15 +1,19 @@
 #include "ticket.h"
+#include "time.h"
 
 Ticket::Ticket()
 {
     value = 0;
-    time_t now = time(0);
-    tm *ltm = localtime(&now);
+    timer = time(NULL);
+    timeString = ctime(&timer);
+
+
 }
 
 Ticket::Ticket(int s_value)
 {
     value = s_value;
-    time_t now = time(0);
-    tm *ltm = localtime(&now);
+    timer = time(NULL);
+    timeString = ctime(&timer);
+
 }
