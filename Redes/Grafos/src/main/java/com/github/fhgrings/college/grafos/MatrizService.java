@@ -43,4 +43,47 @@ public class MatrizService {
             }
         }
     }
+
+
+    // Da mesma maneira que passamos por todos os  pontos das matrizes como nos metodos anteriores
+    // Nesse metodo Guardamos uma primeira variavel de valor alto, para que seja substituido pelas proximas
+    // A medida que for encontrando caminhos com pesos menores
+    public void encontrarMenorValor() {
+        int menorValor = 100000;
+        String valor = "Primeiro valor é o menor";
+        for (int i = 0; i < eixoX; i++) {
+            for (int j = 0; j < eixoy; j++) {
+                if (matriz[i][j] < menorValor && matriz[i][j] != 0 && matriz[i][j] != -1) {
+                    menorValor = matriz[i][j];
+                    valor = i + 1 + "--->" + (j + 1) + " = " +menorValor;
+                }
+            }
+        }
+        System.out.println(valor);
+    }
+
+
+
+    // Da mesma maneira que passamos por todos os  pontos das matrizes como nos metodos anteriores
+    // Nesse metodo Guardamos uma primeira variavel de valor 0, para que seja substituido pelas proximas
+    // A medida que for encontrando caminhos com pesos MAIORES
+    public void encontrarMaiorValor() {
+        int maiorValor = matriz[0][0];
+        String valor = "Primeiro valor é o maior";
+        for (int i = 0; i < eixoX; i++) {
+            for (int j = 0; j < eixoy; j++) {
+                //Caso o valor encontrado seja maior que o anterior salvo
+                //Gera uma nova String com a aresta e o peso do mesmo
+                if (matriz[i][j] > maiorValor) {
+                    maiorValor = matriz[i][j];
+                    valor = (i + 1) + "--->" + (j + 1) + " = " + maiorValor;
+                }
+            }
+        }
+
+        //Ao sair de todos os loops, printa o ultimo resultado gravado, sendo o maior
+        System.out.println(valor);
+
+    }
+
 }
