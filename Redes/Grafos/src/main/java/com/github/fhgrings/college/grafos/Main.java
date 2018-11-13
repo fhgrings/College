@@ -31,7 +31,7 @@ public class Main {
 
 
 //      System.out.println vai executar o metodo(função) que encontra o caminho mais rapido de 1 à 5 e mostrar na tela
-        System.out.println(encontrarCaminho.execute(1,5));
+        //System.out.println(encontrarCaminho.execute(1,5));
 
 
 
