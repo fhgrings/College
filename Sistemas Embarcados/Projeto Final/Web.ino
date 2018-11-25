@@ -1,31 +1,60 @@
 #include <WiFi.h>
+#include "DHT.h"
 
-// Replace with your network credentials
-const char* ssid     = "Redmi";
-const char* password = "felipehg";
 
-// Set web server port number to 80
+//Pinos de leitura dos sensores
+#define DHTPIN 18     // what digital pin we're connected to
+#define DHTPIN2 19 
+
+
+
+//Modelo do sensor
+//#define DHTTYPE DHT11   // DHT 11
+#define DHTTYPE DHT11   // DHT 22  (AM2302), AM2321
+//#define DHTTYPE DHT21   // DHT 21 (AM2301)
+
+
+
+//Instancia dos dois sensores
+DHT dht(DHTPIN, DHTTYPE);
+DHT dht2(DHTPIN2, DHTTYPE);
+
+#define STORAGE_SIZE 10
+#define TOLERANCE 10
+
+int TemperatureSensor1[STORAGE_SIZE];
+int TemperatureSensor2[STORAGE_SIZE];
+
+
+//===========================================
+// COnfigurar conexao WIfi
+//Entrar com os valores de conexao da rede Wifi
+const char* ssid     = "GVT-DE94";
+const char* password = "0011710928";
+
+
+
+//Setar porta
 WiFiServer server(80);
 
-// Variable to store the HTTP request
+//Variavel para ler a head
 String header;
 
-// Auxiliar variables to store the current output state
 String output26State = "off";
 String output27State = "off";
 
-// Assign output variables to GPIO pins
+
+
+// Setar as portas com as saidas
 const int output26 = 2;
-const int output27 = 27;
+int contador = 0;
 
 void setup() {
   Serial.begin(115200);
   // Initialize the output variables as outputs
   pinMode(output26, OUTPUT);
-  pinMode(output27, OUTPUT);
   // Set outputs to LOW
   digitalWrite(output26, LOW);
-  digitalWrite(output27, LOW);
 
   // Connect to Wi-Fi network with SSID and password
   Serial.print("Connecting to ");
@@ -44,6 +73,38 @@ void setup() {
 }
 
 void loop(){
+
+  delay(1000);
+  // Wait a few seconds between measurements.
+
+  // Reading temperature or humidity takes about 250 milliseconds!
+  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+  float h = dht.readHumidity();
+  float h2 = dht2.readHumidity()+30;
+  
+  // Read temperature as Celsius (the default)
+  float t = dht.readTemperature();
+  addToVector1(h);
+    
+
+  float t2 = dht2.readTemperature()+20;
+  addInVector2(h2);
+
+  // Check if any reads failed and exit early (to try again).
+  if (isnan(h) || isnan(t)) {
+    Serial.println("Failed to read from DHT sensor!");
+    return;
+  }
+
+
+
+  
+  
+
+
+
+  //======================================================================
+  
   WiFiClient client = server.available();   // Listen for incoming clients
 
   if (client) {                             // If a new client connects,
@@ -74,14 +135,12 @@ void loop(){
               Serial.println("GPIO 26 off");
               output26State = "off";
               digitalWrite(output26, LOW);
-            } else if (header.indexOf("GET /27/on") >= 0) {
-              Serial.println("GPIO 27 on");
-              output27State = "on";
-              digitalWrite(output27, HIGH);
-            } else if (header.indexOf("GET /27/off") >= 0) {
-              Serial.println("GPIO 27 off");
-              output27State = "off";
-              digitalWrite(output27, LOW);
+            } else if (header.indexOf("GET /26/historico") >= 0) {
+              Serial.println("GPIO 26 off");
+              output26State = "historico";
+            } else {
+              client.println("ERROR: 404");
+              break;
             }
             
             // Display the HTML web page
@@ -96,29 +155,45 @@ void loop(){
             client.println(".button2 {background-color: #555555;}</style></head>");
             
             // Web Page Heading
-            client.println("<body><h1>ESP32 Web Server</h1>");
+            client.println("<body><h1>ESP32 Web Server</h1><h2>Teoria de Redes - Projeto GB</h2>");
             
             // Display current state, and ON/OFF buttons for GPIO 26  
             client.println("<p>GPIO 26 - State " + output26State + "</p>");
             // If the output26State is off, it displays the ON button       
             if (output26State=="off") {
               client.println("<p><a href=\"/26/on\"><button class=\"button\">ON</button></a></p>");
-            } else {
+            } else if( output26State = "historico") {
+              for(int i =0;i<8;i++){
+                client.println( TemperatureSensor1[i]);
+              }
+            }
+            else {
               client.println("<p><a href=\"/26/off\"><button class=\"button button2\">OFF</button></a></p>");
             } 
-               
-            // Display current state, and ON/OFF buttons for GPIO 27  
-            client.println("<p>GPIO 27 - State " + output27State + "</p>");
-            // If the output27State is off, it displays the ON button       
-            if (output27State=="off") {
-              client.println("<p><a href=\"/27/on\"><button class=\"button\">ON</button></a></p>");
-            } else {
-              client.println("<p><a href=\"/27/off\"><button class=\"button button2\">OFF</button></a></p>");
-            }
-            client.println("</body></html>");
             
+            client.println("<p><a href=\"/historico\"><button class=\"button buttonstory\">Historico</button></a></p>");
+
             // The HTTP response ends with another blank line
-            client.println();
+
+            if(!isEqual(t,t2) || isSensorProblem(TemperatureSensor2) || isSensorProblem(TemperatureSensor1) )
+              client.println("Problema no sensor 1");
+
+            client.println("<p>Temperatura: ");
+            client.println(t);
+            client.println("Umidade: ");
+            client.println(h);
+            client.println("</p>");
+
+            
+            client.println("<p>Temperatura: ");
+            client.println(t2);
+            client.println("Umidade: ");
+            client.println(h2);
+            client.println("</p>");
+            
+
+            
+
             // Break out of the while loop
             break;
           } else { // if you got a newline, then clear currentLine
@@ -136,4 +211,48 @@ void loop(){
     Serial.println("Client disconnected.");
     Serial.println("");
   }
+}
+
+
+
+
+bool isEqual(int value1, int value2) {
+  value2 += TOLERANCE / 2;
+  for (int i = 0; i < TOLERANCE; i++) {
+    if (value1 == (value2 - i))
+      return true;
+  }
+  return false;
+}
+
+
+
+void addToVector1(int value) {
+  int store;
+  for (int i = STORAGE_SIZE-1; i > 0; i--) {
+
+    store = TemperatureSensor1[i-1];
+    TemperatureSensor1[i] = store;
+  }
+  
+  TemperatureSensor1[0] = value;
+}
+
+void addInVector2(int value) {
+  int store;
+  for (int i = STORAGE_SIZE-1; i > 0; i--) {
+
+    store = TemperatureSensor2[i-1];
+    TemperatureSensor2[i] = store;
+  }
+  TemperatureSensor2[0] = value;
+
+}
+
+bool isSensorProblem(int vector[]){
+  for(int i=1;i<STORAGE_SIZE;i++){
+    if(isEqual(vector[0],vector[1]))
+      return false;
+  }
+  return true;
 }

@@ -22,7 +22,7 @@ public class MatrizService {
     public void printMatriz() {
         for (int i = 0; i < eixoX; i++) {
             for (int j = 0; j < eixoy; j++) {
-                System.out.print(matriz[i][j] + " ");
+                System.out.print(matriz[i][j] + "     |     ");
             }
             System.out.println();
         }
@@ -53,7 +53,7 @@ public class MatrizService {
         String valor = "Primeiro valor é o menor";
         for (int i = 0; i < eixoX; i++) {
             for (int j = 0; j < eixoy; j++) {
-                if (matriz[i][j] < menorValor && matriz[i][j] != 0 && matriz[i][j] != -1) {
+                if (matriz[i][j] < menorValor && matriz[i][j] > 0) {
                     menorValor = matriz[i][j];
                     valor = i + 1 + "--->" + (j + 1) + " = " +menorValor;
                 }

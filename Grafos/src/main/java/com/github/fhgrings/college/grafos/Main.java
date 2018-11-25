@@ -5,11 +5,12 @@ public class Main {
 //  Essa area de public static int é a declaração das variaveis, o que tem varias coisas é a matriz recebendo direto na declaração
     public static int eixoX = 5;
     public static int eixoy = 5;
-    public static int matriz[][] =  { {-1, 10, 0, 0, -1}, {0, 0, 0, 8, 12}, {50, 0, -1, 0, 0}, {0, 0, 0, 0,0}, {0, 0, 0, 10, 0} };
+    public static int matriz[][] =  { {0, 1, 0, 1, 0}, {0, 0, 0, 0, 0}, {0, 1, 0, 1, 1}, {0, 1, 1, 0,0}, {0, 0, 1, 0, 0} };
     public static int[][] matrizCaminho = new int[(int)Math.pow(matriz.length,2)][2];
     public static int k = 0;
 
     // Declaracao das outras casses pra poder usar os metodos(funções) delas
+    private static EncontrarCaminho encontrarCaminho = new EncontrarCaminho();
     private static MatrizService matrizService = new MatrizService();
 
 
@@ -32,12 +33,6 @@ public class Main {
 //      System.out.println vai executar o metodo(função) que encontra o caminho mais rapido de 1 à 5 e mostrar na tela
         //System.out.println(encontrarCaminho.execute(1,5));
 
-
-        System.out.println("Encontrar o maior e menor valor das arestas");
-        matrizService.encontrarMaiorValor();
-
-
-        matrizService.encontrarMenorValor();
 
 
 
