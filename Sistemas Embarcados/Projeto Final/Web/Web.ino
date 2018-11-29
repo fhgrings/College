@@ -20,7 +20,7 @@ DHT dht(DHTPIN, DHTTYPE);
 DHT dht2(DHTPIN2, DHTTYPE);
 
 #define STORAGE_SIZE 10
-#define TOLERANCE 10
+#define TOLERANCE 3
 
 int TemperatureSensor1[STORAGE_SIZE];
 int TemperatureSensor2[STORAGE_SIZE];
@@ -31,6 +31,7 @@ int TemperatureSensor2[STORAGE_SIZE];
 //Entrar com os valores de conexao da rede Wifi
 const char* ssid     = "GVT-DE94";
 const char* password = "0011710928";
+//const char* password = "0011710928";
 
 
 
@@ -42,6 +43,7 @@ String header;
 
 String output26State = "off";
 String output27State = "off";
+String problemaSensor;
 
 
 
@@ -74,21 +76,21 @@ void setup() {
 
 void loop(){
 
-  delay(1000);
+  delay(100);
   // Wait a few seconds between measurements.
 
   // Reading temperature or humidity takes about 250 milliseconds!
   // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
   float h = dht.readHumidity();
-  float h2 = dht2.readHumidity()+30;
+  float h2 = dht2.readHumidity()+35;
   
   // Read temperature as Celsius (the default)
   float t = dht.readTemperature();
-  addToVector1(h);
+  addToVector1(t);
     
 
-  float t2 = dht2.readTemperature()+20;
-  addInVector2(h2);
+  float t2 = dht2.readTemperature();
+  addInVector2(t2);
 
   // Check if any reads failed and exit early (to try again).
   if (isnan(h) || isnan(t)) {
@@ -155,42 +157,83 @@ void loop(){
             client.println(".button2 {background-color: #555555;}</style></head>");
             
             // Web Page Heading
-            client.println("<body><h1>ESP32 Web Server</h1><h2>Teoria de Redes - Projeto GB</h2>");
+            client.println("<body><h1>ESP32 Web Server</h1><h2>Aviario seu Elder</h2>");
             
             // Display current state, and ON/OFF buttons for GPIO 26  
             client.println("<p>GPIO 26 - State " + output26State + "</p>");
+
+
+            
             // If the output26State is off, it displays the ON button       
             if (output26State=="off") {
               client.println("<p><a href=\"/26/on\"><button class=\"button\">ON</button></a></p>");
-            } else if( output26State = "historico") {
+            } 
+            
+            if( output26State == "historico") {
+              client.println( "<p>Sensor 1 \n");
+              
               for(int i =0;i<8;i++){
                 client.println( TemperatureSensor1[i]);
               }
-            }
-            else {
+              client.println("</p><p>");
+
+              client.println( "Sensor 2 \n");
+
+              for(int i =0;i<8;i++){
+                client.println( TemperatureSensor2[i]);
+              }
+              client.println("</p>");
+
+              client.println("<p><a href=\"/26/off\"><button class=\"button button2\">Voltar</button></a></p>");
+            } 
+            
+            if(output26State == "on") {
               client.println("<p><a href=\"/26/off\"><button class=\"button button2\">OFF</button></a></p>");
             } 
             
-            client.println("<p><a href=\"/historico\"><button class=\"button buttonstory\">Historico</button></a></p>");
+            client.println("<p><a href=\"/26/historico\"><button class=\"button buttonStory\">Historico</button></a></p>");
 
             // The HTTP response ends with another blank line
 
-            if(!isEqual(t,t2) || isSensorProblem(TemperatureSensor2) || isSensorProblem(TemperatureSensor1) )
-              client.println("Problema no sensor 1");
+            if(!isEqual(t,t2)){
+              if(isSensorProblem(TemperatureSensor2)){
+                problemaSensor = "Problema no sensor 2";
+                
+                client.println(problemaSensor);
 
-            client.println("<p>Temperatura: ");
+                
+                client.println("<p>Temperatura 1: ");
+                client.println(t);
+                client.println("Umidade: ");
+                client.println(h);
+                client.println("</p>");
+              }
+              else if (isSensorProblem(TemperatureSensor1)) {
+                problemaSensor = "Problema no sensor 1";
+                client.println(problemaSensor);
+                
+                client.println("<p>Temperatura: ");
+                client.println(t);
+                client.println("Umidade: ");
+                client.println(h);
+                client.println("</p>");
+              }
+              else {
+                client.println(problemaSensor);
+                
+                client.println("<p>Temperatura 1: ");
+                client.println(t);
+                client.println("Umidade: ");
+                client.println(h);
+                client.println("</p>");
+              }
+            } else {
+            client.println("<p>Temperatura 1: ");
             client.println(t);
             client.println("Umidade: ");
             client.println(h);
             client.println("</p>");
-
-            
-            client.println("<p>Temperatura: ");
-            client.println(t2);
-            client.println("Umidade: ");
-            client.println(h2);
-            client.println("</p>");
-            
+            }      
 
             
 
