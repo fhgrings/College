@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1551816313 source:c:\users\felip\desktop\code\faculdade\college\9_semestre\poo_ii\diferencadatas\src\data.cpp
+	"Data.h"
+	"time.h"
+
+1551304513 c:\users\felip\desktop\code\faculdade\college\9_semestre\poo_ii\diferencadatas\include\data.h
+	"time.h"
+
