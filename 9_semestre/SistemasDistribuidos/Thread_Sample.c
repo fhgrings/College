@@ -1,3 +1,5 @@
+// Para compilar o código
+// gcc thread.c -pthread -o thread
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
